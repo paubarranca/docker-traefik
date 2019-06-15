@@ -35,7 +35,3 @@ sh -c "curl -L https://raw.githubusercontent.com/docker/compose/${COMPOSE_VERSIO
 
 # Output compose version
 docker-compose -v
-if (( $? != 0 ))
-then
-	echo "ERROR: Docker compose not installed"
-fi
