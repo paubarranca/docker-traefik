@@ -12,7 +12,9 @@ services:
         front:
                 container_name: front
                 restart: always
-                image: 'paubarranca/docker-multi-site-apache:latest'
+                #image: 'paubarranca/docker-multi-site-apache:latest'
+                build:
+                        context: ./Dockerfiles/apache2
                 #volumes:
                 #- /srv/apache2/sites-available:/etc/apache2/sites-available
                 #- /srv/apache2/sites-enabled:/etc/apache2/sites-enabled
