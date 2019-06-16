@@ -3,9 +3,12 @@ services:
         haproxy:
                 container_name: haproxy
                 restart: always
-                image: 'paubarranca/docker-multi-site-haproxy:latest'
+                #image: 'paubarranca/docker-multi-site-haproxy:latest'
+                build:
+                        context: ./Dockerfiles/haproxy
                 volumes:
-                        - /srv/haproxy:/etc/haproxy 
+                        - /srv/haproxy/haproxy.cfg:/etc/haproxy/haproxy.cfg 
+                        - /srv/haproxy/certs:/etc/haproxy/certs
                 ports:
                         - "80:80"
                         - "443:443"
@@ -15,14 +18,37 @@ services:
                 #image: 'paubarranca/docker-multi-site-apache:latest'
                 build:
                         context: ./Dockerfiles/apache2
-                #volumes:
-                #- /srv/apache2/sites-available:/etc/apache2/sites-available
-                #- /srv/apache2/sites-enabled:/etc/apache2/sites-enabled
-                #- /srv/web:/var/www/html
+                volumes:
+                        - /srv/apache2/sites-available:/etc/apache2/sites-available:ro
+                        - /srv/apache2/sites-enabled:/etc/apache2/sites-enabled:ro
+                        - /srv/web:/var/www:ro
         mysql:
                 container_name: mysql
-                image: 'mysql'
+                image: mysql:5.7
+                #volumes:
+                #- db_data:/var/lib/mysql
+                restart: always
                 environment:
-                        MYSQL_ROOT_PASSWORD: bdjfrdfief
+                        MYSQL_ROOT_PASSWORD: somewordpress
+                        MYSQL_DATABASE: wordpress
+                        MYSQL_USER: wordpress
+                        MYSQL_PASSWORD: wordpress                
+                
+        wordpress:
+                container_name: wordpress
+                restart: always
+                depends_on:
+                        - mysql
+                image: wordpress:latest
+                #build:
+                        #context: ./Dockerfiles/wordpress
+                environment:
+                        WORDPRESS_DB_HOST: mysql:3306
+                        WORDPRESS_DB_USER: wordpress
+                        WORDPRESS_DB_PASSWORD: wordpress
+                        WORDPRESS_DB_NAME: wordpress
         redis:
-                image: 'redis:latest'
+                image: redis:latest
+
+volumes:
+        db_data: {}
