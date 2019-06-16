@@ -6,7 +6,7 @@
 COMPOSE_VERSION=$(curl -s https://api.github.com/repos/docker/compose/releases/latest | grep 'tag_name' | cut -d\" -f4)
 
 # Prerequiste packages
-echo -e "Adding prerequiste packages ... \n\n"
+echo -e "Adding prerequiste packages... \n\n"
 sudo apt update > /dev/null
 sudo apt install apt-transport-https net-tools ca-certificates curl gnupg2 software-properties-common 2> /dev/null
 # Docker GPG Key
@@ -28,10 +28,11 @@ then
 fi
 
 # Install docker-compose
-echo -e "\nInstalling docker-compose .... \n\n"
+echo -e "\nInstalling docker-compose.... \n\n"
 sh -c "curl -L https://github.com/docker/compose/releases/download/${COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose"
 chmod +x /usr/local/bin/docker-compose
 sh -c "curl -L https://raw.githubusercontent.com/docker/compose/${COMPOSE_VERSION}/contrib/completion/bash/docker-compose > /etc/bash_completion.d/docker-compose"
 
 # Output compose version
+echo -e "\nDocker-compose version: \n "
 docker-compose -v
