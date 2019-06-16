@@ -5,6 +5,6 @@ COPY ./web/. .
 
 RUN a2enmod rewrite
 
-CMD service apache2 restart
+#CMD service apache2 restart
 
 EXPOSE 80

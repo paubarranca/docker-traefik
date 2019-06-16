@@ -10,10 +10,14 @@ services:
                 ports:
                         - "80:80"
                         - "443:443"
-        nginx:
-                container_name: nginx
+        front:
+                container_name: front
                 restart: always
-                image: 'nginx:latest'
+                image: 'paubarranca/docker-multi-site-apache:latest'
+                volumes:
+                        - /srv/apache2/sites-available:/etc/apache2/sites-available
+                        - /srv/apache2/sites-enabled:/etc/apache2/sites-enabled
+                        - /srv/web:/var/www/html
         mysql:
                 container_name: mysql
                 image: 'mysql'
