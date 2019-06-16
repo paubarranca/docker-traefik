@@ -14,10 +14,7 @@ services:
                 container_name: nginx
                 restart: always
                 image: 'nginx:latest'
-        mysql:
-                container_name: mysql
-                image: 'mysql'
-                environment:
-                        MYSQL_ROOT_PASSWORD: bdjfrdfief
+        postgres:
+                image: 'postgres:latest'
         redis:
                 image: 'redis:latest'
