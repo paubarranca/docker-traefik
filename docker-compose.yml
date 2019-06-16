@@ -3,10 +3,10 @@ services:
         haproxy:
                 container_name: haproxy
                 restart: always
-                image: 'haproxy:latest'
-                #volumes:
-                        # - /srv/haproxy:/etc/haproxy 
-                        # - /srv/haproxy/certs:/etc/haproxy/certs
+                image: 'paubarranca/docker-multi-site-haproxy:latest'
+                volumes:
+                        - /srv/haproxy:/etc/haproxy 
+                        - /srv/haproxy/certs:/etc/haproxy/certs
                 ports:
                         - "80:80"
                         - "443:443"
