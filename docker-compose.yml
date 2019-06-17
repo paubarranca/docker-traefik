@@ -24,31 +24,29 @@ services:
                         - /srv/web:/var/www:ro
         mysql:
                 container_name: mysql
-                image: mysql:5.7
-                #volumes:
-                #- db_data:/var/lib/mysql
+                image: mysql:8.0
+                volumes:
+                        - /srv/mysql/data:/var/lib/mysql
                 restart: always
                 environment:
-                        MYSQL_ROOT_PASSWORD: somewordpress
+                        MYSQL_ROOT_PASSWORD: U2qYaB8BzZg8u
                         MYSQL_DATABASE: wordpress
-                        MYSQL_USER: wordpress
-                        MYSQL_PASSWORD: wordpress                
-                
+                        MYSQL_USER: docker-test
+                        MYSQL_PASSWORD: sccG6Au8sGhHL
+
         wordpress:
                 container_name: wordpress
                 restart: always
                 depends_on:
                         - mysql
-                image: wordpress:latest
-                #build:
-                        #context: ./Dockerfiles/wordpress
+                image: wordpress:php7.3-apache
+                volumes:
+                        - /srv/wordpress/data:/var/www/html
                 environment:
                         WORDPRESS_DB_HOST: mysql:3306
-                        WORDPRESS_DB_USER: wordpress
-                        WORDPRESS_DB_PASSWORD: wordpress
+                        WORDPRESS_DB_USER: docker-test
+                        WORDPRESS_DB_PASSWORD: sccG6Au8sGhHL
                         WORDPRESS_DB_NAME: wordpress
         redis:
                 image: redis:latest
 
-volumes:
-        db_data: {}
