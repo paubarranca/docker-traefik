@@ -3,9 +3,9 @@ services:
         haproxy:
                 container_name: haproxy
                 restart: always
-                #image: 'paubarranca/docker-multi-site-haproxy:latest'
-                build:
-                        context: ./Dockerfiles/haproxy
+                image: paubarranca/docker-multi-site-haproxy:latest
+                #build:
+                #        context: ./Dockerfiles/haproxy
                 volumes:
                         - /srv/haproxy/haproxy.cfg:/etc/haproxy/haproxy.cfg 
                         - /srv/haproxy/certs:/etc/haproxy/certs
@@ -15,9 +15,9 @@ services:
         front:
                 container_name: front
                 restart: always
-                #image: 'paubarranca/docker-multi-site-apache:latest'
-                build:
-                        context: ./Dockerfiles/apache2
+                image: paubarranca/docker-multi-site-apache:latest
+                #build:
+                #        context: ./Dockerfiles/apache2
                 volumes:
                         - /srv/apache2/sites-available:/etc/apache2/sites-available:ro
                         - /srv/apache2/sites-enabled:/etc/apache2/sites-enabled:ro

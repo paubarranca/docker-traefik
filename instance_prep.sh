@@ -8,7 +8,7 @@ COMPOSE_VERSION=$(curl -s https://api.github.com/repos/docker/compose/releases/l
 # Prerequiste packages
 echo -e "Adding prerequiste packages... \n\n"
 sudo apt update > /dev/null
-sudo apt install apt-transport-https net-tools ca-certificates curl gnupg2 software-properties-common 2> /dev/null
+sudo apt install apt-transport-https net-tools ca-certificates curl gnupg2 software-properties-common -y 2> /dev/null
 # Docker GPG Key
 curl -fsSL https://download.docker.com/linux/debian/gpg | sudo apt-key add - > /dev/null
 
@@ -19,7 +19,7 @@ sudo apt update > /dev/null
 
 # Install docker
 echo -e "\nInstalling docker.... \n\n"
-sudo apt install docker-ce > /dev/null
+sudo apt install docker-ce -y 2> /dev/null
 
 sudo /etc/init.d/docker status
 if (( $? != 0 ))

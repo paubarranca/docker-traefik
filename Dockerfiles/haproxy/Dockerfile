@@ -9,7 +9,7 @@ RUN groupadd --system ${HAPROXY_USER} && \
   chown -R ${HAPROXY_USER}:${HAPROXY_USER} /var/lib/${HAPROXY_USER}
 
 
-COPY haproxy.cfg /usr/local/etc/haproxy/haproxy.cfg
+COPY haproxy.cfg /etc/haproxy/haproxy.cfg
 
 
-CMD ["haproxy", "-db", "-f", "/usr/local/etc/haproxy/haproxy.cfg"]
+CMD ["haproxy", "-db", "-f", "/etc/haproxy/haproxy.cfg"]
