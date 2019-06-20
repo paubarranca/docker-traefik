@@ -9,6 +9,9 @@ services:
                 volumes:
                         - /srv/haproxy/haproxy.cfg:/etc/haproxy/haproxy.cfg 
                         - /srv/haproxy/certs:/etc/haproxy/certs
+                ports:
+                        - "80:80"
+                        - "443:443"
         front:
                 container_name: front
                 restart: always
@@ -28,10 +31,10 @@ services:
                         - /srv/mysql/data:/var/lib/mysql
                 restart: always
                 environment:
-                        MYSQL_ROOT_PASSWORD: RF772V9C4e5A6twPL
+                        MYSQL_ROOT_PASSWORD: U2qYaB8BzZg8u
                         MYSQL_DATABASE: wordpress
                         MYSQL_USER: docker-test
-                        MYSQL_PASSWORD: Kt7xkHHzw9udNXkqL
+                        MYSQL_PASSWORD: sccG6Au8sGhHL
 
         wordpress:
                 container_name: wordpress
@@ -39,15 +42,15 @@ services:
                 depends_on:
                         - mysql
                 image: wordpress:php7.3-apache
-                #volumes:
-                        #        - /srv/wordpress/data:/var/www/html
+                volumes:
+                        - /srv/wordpress/data:/var/www/html
                 environment:
                         WORDPRESS_DB_HOST: mysql:3306
                         WORDPRESS_DB_USER: docker-test
-                        WORDPRESS_DB_PASSWORD: Kt7xkHHzw9udNXkqL
+                        WORDPRESS_DB_PASSWORD: sccG6Au8sGhHL
                         WORDPRESS_DB_NAME: wordpress
                 ports:
-                        - "80:80"
+                        - "81:80"
         redis:
                 image: redis:latest
 
