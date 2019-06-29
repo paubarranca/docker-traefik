@@ -29,14 +29,14 @@ services:
                 restart: always
                 image: paubarranca/docker-multi-site-apache:latest
                 volumes:
-                        - /srv/apache2/sites-available:/etc/apache2/sites-available
-                        - /srv/apache2/sites-enabled:/etc/apache2/sites-enabled
-                        - /srv/apache2/web:/var/www
+                        - /srv/apache2/sites-available:/etc/apache2/sites-available:ro
+                        - /srv/apache2/sites-enabled:/etc/apache2/sites-enabled:ro
+                        - /srv/web:/var/www:ro
                 labels:
                         - "traefik.frontend.rule=Host:dev.zobalo.com"
                         - "traefik.docker.network=traefik"
                         - "traefik.enable=true"
-                        - "traefik.backend=apaches"
+                        - "traefik.backend=wordpress-example"
                         - "traefik.port=80"
                 networks:
                         - traefik
@@ -52,9 +52,6 @@ services:
                         MYSQL_DATABASE: wordpress
                         MYSQL_USER: docker-test
                         MYSQL_PASSWORD: sccG6Au8sGhHL
-                networks:
-                        - traefik
-                        - default
         wordpress:
                 container_name: wordpress
                 restart: always
@@ -65,18 +62,15 @@ services:
                         - /srv/wordpress/data:/var/www/html
                 labels:
                         - "traefik.frontend.rule=Host:zobalo.com"
-                        - "traefik.docker.network=traefik"
-                        - "traefik.enable=true"
-                        - "traefik.backend=wordpress"
-                        - "traefik.port=80"
                 networks:
                         - traefik
-                        - default
                 environment:
                         WORDPRESS_DB_HOST: mysql:3306
                         WORDPRESS_DB_USER: docker-test 
                         WORDPRESS_DB_PASSWORD: sccG6Au8sGhHL
                         WORDPRESS_DB_NAME: wordpress
+                ports:
+                        - "8889:80"
         redis:
                 image: redis:latest
 
