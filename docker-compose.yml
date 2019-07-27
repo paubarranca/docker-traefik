@@ -59,6 +59,8 @@ services:
                         - "traefik.enable=true"
                         - "traefik.backend=wordpress"
                         - "traefik.port=80"
+                volumes:
+                        - /srv/wordpress/data:/var/www/html
                 environment:
                         WORDPRESS_DB_HOST: mysql:3306
                         WORDPRESS_DB_USER: docker-test 
