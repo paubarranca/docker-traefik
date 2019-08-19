@@ -67,4 +67,10 @@ services:
                         WORDPRESS_DB_PASSWORD: sccG6Au8sGhHL
                         WORDPRESS_DB_NAME: docker_test
         redis:
-                image: redis:latest
+                container_name: redis
+                restart: always
+                depends_on:
+                        - front
+                image: paubarranca/docker-multi-site-redis:latest
+                ports:
+                        - "6379:6379"
