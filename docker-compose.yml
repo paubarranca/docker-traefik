@@ -3,7 +3,7 @@ services:
         proxy:
                 container_name: proxy
                 restart: always
-                image: traefik:latest
+                image: traefik:alpine
                 command:
                         - "--api"
                         - "--entrypoints=Name:http Address::80 Redirect.EntryPoint:https"
@@ -29,9 +29,9 @@ services:
         front:
                 container_name: front
                 restart: always
-                image: paubarranca/docker-multi-site-apache:latest
+                image: paubarranca/debian-apache-php:latest
                 volumes:
-                        - /srv/apache2/web:/var/www
+                        - /srv/apache2/web:/var/www/html/httpdocs
                 labels:
                         - "traefik.frontend.rule=Host:dev.zobalo.com"
                         - "traefik.enable=true"
@@ -71,6 +71,6 @@ services:
                 restart: always
                 depends_on:
                         - front
-                image: paubarranca/docker-multi-site-redis:latest
+                image: redis
                 ports:
                         - "6379:6379"
