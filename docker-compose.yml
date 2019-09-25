@@ -15,23 +15,22 @@ services:
                         - "--acme.httpChallenge.entryPoint=http"
                         - "--acme.onHostRule=true"
                         - "--acme.onDemand=false"
-                        - "--acme.email=test@zobalo.com"
                         - "--docker"
                         - "--docker.watch"
                 network_mode: host
-                ports:
-                        - "80:80"
-                        - "443:443"
+                #ports:
+                #        - "80:80"
+                #        - "443:443"
                 volumes:
                         - /var/run/docker.sock:/var/run/docker.sock # So that Traefik can listen to the Docker events
-                        - /srv/traefik/acme/acme.json:/etc/traefik/acme.json           
+                        - /srv/traefik/:/etc/traefik/           
 
         front:
                 container_name: front
                 restart: always
                 image: paubarranca/debian-apache-php:latest
                 volumes:
-                        - /srv/apache2/web:/var/www/httpdocs
+                        - /srv/front/web:/var/www/httpdocs
                 labels:
                         - "traefik.frontend.rule=Host:dev.zobalo.com"
                         - "traefik.enable=true"
@@ -71,6 +70,6 @@ services:
                 restart: always
                 depends_on:
                         - front
-                image: redis
+                image: paubarranca/redis:v1
                 ports:
                         - "6379:6379"
