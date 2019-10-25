@@ -18,9 +18,6 @@ services:
                         - "--docker"
                         - "--docker.watch"
                 network_mode: host
-                #ports:
-                #        - "80:80"
-                #        - "443:443"
                 volumes:
                         - /var/run/docker.sock:/var/run/docker.sock # So that Traefik can listen to the Docker events
                         - /srv/traefik/:/etc/traefik/           
@@ -36,6 +33,9 @@ services:
                         - "traefik.enable=true"
                         - "traefik.backend=front"
                         - "traefik.port=80"
+                        - "traefik.frontend.headers.STSSeconds=31536000"
+                        - "traefik.frontend.headers.STSIncludeSubdomains=true"
+                        - "traefik.frontend.headers.STSPreload=true"
         mysql:
                 container_name: mysql
                 restart: always
@@ -58,6 +58,9 @@ services:
                         - "traefik.enable=true"
                         - "traefik.backend=wordpress"
                         - "traefik.port=80"
+                        - "traefik.frontend.headers.STSSeconds=31536000"
+                        - "traefik.frontend.headers.STSIncludeSubdomains=true"
+                        - "traefik.frontend.headers.STSPreload=true"
                 volumes:
                         - /srv/wordpress/data:/var/www/html
                 environment:
