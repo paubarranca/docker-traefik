@@ -13,12 +13,15 @@ fi
 
 read -p "Where do you want to pull the repository $3? (use the absolute path, for example /srv/john/myrepo/) : "  USER_CUSTOM_PATH
 
-sudo apt-get install git
+if [[ ! -d $USER_CUSTOM_PATH ]]; then
+	mkdir -p $USER_CUSTOM_PATH
+fi
 
-# GitHub config
+sudo apt-get install git > /dev/null
+
+# GitHub config & keys
 git config --global user.name $1
 git config --global user.email $2
-
 
 if [[ -f $GIT_KEY ]]; then
 	echo -e "\nKey pair already exist... Skipping...\n"
@@ -28,13 +31,16 @@ else
 	cat $GIT_KEY.pub
 fi
 
+git remote rm origin
 git remote add origin git@github.com:$3.git
 
 # Set user and repository globally
 git config --global credential.https://github.com.$1 $1
 git remote set-url origin git@github.com:$3.git
 
-git pull git@github.com:$3.git $USER_CUSTOM_PATH
+cd $USER_CUSTOM_PATH
+git init
+git pull git@github.com:$3.git
 
 if [[ $? -eq 0 ]]; then
 	echo -e "\nRepositroy pulled succesfully, available at $USER_CUSTOM_PATH"
