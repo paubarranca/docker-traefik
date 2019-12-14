@@ -1,9 +1,9 @@
 version: '3'
 services:
-        proxy:
-                container_name: proxy
+        traefik:
+                container_name: traefik
                 restart: always
-                image: traefik:alpine
+                image: traefik:v1.7-alpine
                 command:
                         - "--api"
                         - "--entrypoints=Name:http Address::80 Redirect.EntryPoint:https"
@@ -17,11 +17,12 @@ services:
                         - "--acme.onDemand=false"
                         - "--docker"
                         - "--docker.watch"
-                network_mode: host
                 volumes:
-                        - /var/run/docker.sock:/var/run/docker.sock # So that Traefik can listen to the Docker events
+                        - /var/run/docker.sock:/var/run/docker.sock
                         - /srv/traefik/:/etc/traefik/           
-
+                ports:
+                        - "80:80"
+                        - "443:443"
         front:
                 container_name: front
                 restart: always
@@ -31,7 +32,6 @@ services:
                 labels:
                         - "traefik.frontend.rule=Host:dev.zobalo.com"
                         - "traefik.enable=true"
-                        - "traefik.backend=front"
                         - "traefik.port=80"
                         - "traefik.frontend.headers.STSSeconds=31536000"
                         - "traefik.frontend.headers.STSIncludeSubdomains=true"
@@ -43,10 +43,12 @@ services:
                 volumes:
                         - /srv/mysql/data:/var/lib/mysql
                 environment:
-                        MYSQL_ROOT_PASSWORD: RF772V9C4e5A6twPL
-                        MYSQL_DATABASE: docker_test 
-                        MYSQL_USER: docker-test
-                        MYSQL_PASSWORD: sccG6Au8sGhHL
+                          MYSQL_ROOT_PASSWORD: sccG6Au8sGhHL
+                          MYSQL_DATABASE: docker_test 
+                          MYSQL_USER: docker-test
+                          MYSQL_PASSWORD: sccG6Au8sGhHL
+                labels:
+                        - "traefik.enable=false"
         wordpress:
                 container_name: wordpress
                 restart: always
@@ -54,9 +56,8 @@ services:
                         - mysql
                 image: wordpress:php7.3-apache
                 labels:
-                        - "traefik.frontend.rule=Host:www.zobalo.com"
+                        - "traefik.frontend.rule=Host:zobalo.com,www.zobalo.com"
                         - "traefik.enable=true"
-                        - "traefik.backend=wordpress"
                         - "traefik.port=80"
                         - "traefik.frontend.headers.STSSeconds=31536000"
                         - "traefik.frontend.headers.STSIncludeSubdomains=true"
@@ -64,10 +65,10 @@ services:
                 volumes:
                         - /srv/wordpress/data:/var/www/html
                 environment:
-                        WORDPRESS_DB_HOST: mysql:3306
-                        WORDPRESS_DB_USER: docker-test 
-                        WORDPRESS_DB_PASSWORD: sccG6Au8sGhHL
-                        WORDPRESS_DB_NAME: docker_test
+                          WORDPRESS_DB_HOST: mysql:3306
+                          WORDPRESS_DB_USER: docker-test 
+                          WORDPRESS_DB_PASSWORD: sccG6Au8sGhHL 
+                          WORDPRESS_DB_NAME: docker_test
         redis:
                 container_name: redis
                 restart: always
@@ -76,3 +77,5 @@ services:
                 image: paubarranca/redis:v1
                 ports:
                         - "6379:6379"
+                labels:
+                        - "traefik.enable=false"

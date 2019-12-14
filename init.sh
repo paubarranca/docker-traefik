@@ -1,14 +1,13 @@
-#!/bin/bash
-# Pau Barrranca
-# Preparation to exec docker / compose in an instance
+#!/bin/bash -e
 
 # get latest docker compose released tag
 COMPOSE_VERSION=$(curl -s https://api.github.com/repos/docker/compose/releases/latest | grep 'tag_name' | cut -d\" -f4)
 
 # Prerequiste packages
-echo -e "Adding prerequiste packages... \n\n"
+echo -e "\nAdding prerequiste packages... \n\n"
 sudo apt update > /dev/null
-sudo apt install apt-transport-https net-tools ca-certificates curl gnupg2 software-properties-common -y 2> /dev/null
+sudo apt install apt-transport-https net-tools ca-certificates curl gnupg2 software-properties-common -y > /dev/null
+
 # Docker GPG Key
 curl -fsSL https://download.docker.com/linux/debian/gpg | sudo apt-key add - > /dev/null
 
@@ -19,13 +18,7 @@ sudo apt update > /dev/null
 
 # Install docker
 echo -e "\nInstalling docker.... \n\n"
-sudo apt install docker-ce -y 2> /dev/null
-
-sudo /etc/init.d/docker status
-if (( $? != 0 ))
-then
-	echo "ERROR: Docker service not running"
-fi
+sudo apt install docker-ce -y > /dev/null
 
 # Install docker-compose
 echo -e "\nInstalling docker-compose.... \n\n"
@@ -35,4 +28,4 @@ sh -c "curl -L https://raw.githubusercontent.com/docker/compose/${COMPOSE_VERSIO
 
 # Output compose version
 echo -e "\nDocker-compose version: \n "
-docker-compose -v
+/usr/local/bin/docker-compose -v
