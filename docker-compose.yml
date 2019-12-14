@@ -28,7 +28,7 @@ services:
                 restart: always
                 image: paubarranca/debian-apache-php:latest
                 volumes:
-                        - /srv/front/web:/var/www/httpdocs
+                        - /srv/front/data:/var/www/httpdocs
                 labels:
                         - "traefik.frontend.rule=Host:dev.zobalo.com"
                         - "traefik.enable=true"
