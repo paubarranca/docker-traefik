@@ -1,28 +1,31 @@
-version: '3'
+version: '3.7'
 services:
         traefik:
                 container_name: traefik
                 restart: always
-                image: traefik:v1.7-alpine
+                image: traefik:v2.1
                 command:
-                        - "--api"
-                        - "--entrypoints=Name:http Address::80 Redirect.EntryPoint:https"
-                        - "--entrypoints=Name:https Address::443 TLS"
-                        - "--defaultentrypoints=http,https"
-                        - "--acme"
-                        - "--acme.storage=acme.json"
-                        - "--acme.entryPoint=https"
-                        - "--acme.httpChallenge.entryPoint=http"
-                        - "--acme.onHostRule=true"
-                        - "--acme.onDemand=false"
-                        - "--docker"
-                        - "--docker.watch"
+                        --api
+                        --global.sendAnonymousUsage=false
+                        --entryPoints.http.address=:80
+                        --entryPoints.https.address=:443
+                        --certificatesresolvers.tls.acme.tlschallenge=true
+                        --certificatesResolvers.tls.acme.storage=/etc/traefik/acme.json
+                        --certificatesresolvers.tls.acme.httpchallenge=true
+                        --certificatesResolvers.tls.acme.httpChallenge.entryPoint=http
+                        --providers.docker=true
+                        --providers.docker.exposedbydefault=false
                 volumes:
                         - /var/run/docker.sock:/var/run/docker.sock
                         - /srv/traefik/:/etc/traefik/           
                 ports:
                         - "80:80"
                         - "443:443"
+                          #labels:
+                          #- traefik.http.routers.http-catchall.rule=hostregexp(`{host:.+}`)
+                          #- traefik.http.routers.http-catchall.entrypoints=web
+                          #- traefik.http.routers.http-catchall.middlewares=redirect-to-https@docker
+                          #- traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https
         front:
                 container_name: front
                 restart: always
@@ -30,12 +33,14 @@ services:
                 volumes:
                         - /srv/front/data:/var/www/httpdocs
                 labels:
-                        - "traefik.frontend.rule=Host:dev.zobalo.com"
-                        - "traefik.enable=true"
-                        - "traefik.port=80"
-                        - "traefik.frontend.headers.STSSeconds=31536000"
-                        - "traefik.frontend.headers.STSIncludeSubdomains=true"
-                        - "traefik.frontend.headers.STSPreload=true"
+                        - traefik.enable=true
+                        - traefik.http.routers.dev.rule=Host(`dev.zobalo.com`)
+                        - traefik.http.routers.dev.entrypoints=http
+                        - traefik.http.routers.dev.middlewares=redirect
+                        - traefik.http.middlewares.redirect.redirectscheme.scheme=https
+                        - traefik.http.routers.dev2.rule=Host(`dev.zobalo.com`)
+                        - traefik.http.routers.dev2.entrypoints=https
+                        - traefik.http.routers.dev2.tls.certresolver=tls
         mysql:
                 container_name: mysql
                 restart: always
@@ -47,8 +52,6 @@ services:
                           MYSQL_DATABASE: docker_test 
                           MYSQL_USER: docker-test
                           MYSQL_PASSWORD: sccG6Au8sGhHL
-                labels:
-                        - "traefik.enable=false"
         wordpress:
                 container_name: wordpress
                 restart: always
@@ -56,12 +59,14 @@ services:
                         - mysql
                 image: wordpress:php7.3-apache
                 labels:
-                        - "traefik.frontend.rule=Host:zobalo.com,www.zobalo.com"
-                        - "traefik.enable=true"
-                        - "traefik.port=80"
-                        - "traefik.frontend.headers.STSSeconds=31536000"
-                        - "traefik.frontend.headers.STSIncludeSubdomains=true"
-                        - "traefik.frontend.headers.STSPreload=true"
+                        - traefik.enable=true
+                        - traefik.http.routers.wp.rule=Host(`zobalo.com`,`www.zobalo.com`)
+                        - traefik.http.routers.wp.entrypoints=http
+                        - traefik.http.routers.wp.middlewares=redirect
+                        - traefik.http.middlewares.redirect.redirectscheme.scheme=https
+                        - traefik.http.routers.wp2.rule=Host(`zobalo.com`,`www.zobalo.com`)
+                        - traefik.http.routers.wp2.entrypoints=https
+                        - traefik.http.routers.wp2.tls.certresolver=tls
                 volumes:
                         - /srv/wordpress/data:/var/www/html
                 environment:
@@ -77,5 +82,3 @@ services:
                 image: paubarranca/redis:v1
                 ports:
                         - "6379:6379"
-                labels:
-                        - "traefik.enable=false"
