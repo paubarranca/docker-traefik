@@ -30,4 +30,4 @@ sh -c "curl -L https://raw.githubusercontent.com/docker/compose/${COMPOSE_VERSIO
 /usr/local/bin/docker-compose -v
 
 # Create specific docker volumes
-mkdir -p /srv/traefik /srv/wordpress/data srv/mysql/data /srv/front/data
+mkdir -p /srv/traefik /srv/wordpress/data /srv/mysql/data /srv/front/data
