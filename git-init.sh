@@ -4,7 +4,7 @@
 #$2=$GIT_MAIL
 #$3=$GIT_REPO
 
-GIT_KEY=~/.ssh/git-key
+GIT_KEY=~/.ssh/git-$1-key
 
 if [[ "$#" -ne 3 ]]; then
 	echo -e "\nSCRIPT USAGE: ./git-init.sh githubuser githubmail repositoryname \nEXAMPLE: ./git-init.sh johnwilliams john.williams@gmail.com johnwilliams/docker-test\n"
