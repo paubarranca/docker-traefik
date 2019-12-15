@@ -35,7 +35,7 @@ else
 fi
 
 # Use the created key for GitHub.com
-if [[ ! -d $SSH_CONFIG_FILE ]]; then
+if [[ ! -f $SSH_CONFIG_FILE ]]; then
     cat <<EOF >> $SSH_CONFIG_FILE
 Host github.com
     HostName github.com
