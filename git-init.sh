@@ -5,6 +5,7 @@
 #$3=$GIT_REPO
 
 GIT_KEY=~/.ssh/git-$1-key
+SSH_CONFIG_FILE=~/.ssh/config
 
 if [[ "$#" -ne 3 ]]; then
 	echo -e "\nSCRIPT USAGE: ./git-init.sh githubuser githubmail repositoryname \nEXAMPLE: ./git-init.sh johnwilliams john.williams@gmail.com johnwilliams/docker-test\n"
@@ -27,8 +28,26 @@ if [[ -f $GIT_KEY ]]; then
 	echo -e "\nKey pair already exist... Skipping...\n"
 else
 	ssh-keygen -t rsa -N "" -f $GIT_KEY
-	echo -e "\nPublic key to add on github ssh keys:\n"
+	echo -e "\nPublic key to add on GitHub ssh keys:\n"
 	cat $GIT_KEY.pub
+    echo -e "\n\n"
+    read -n 1 -s -r -p "Press enter when your key is added on GitHub ....."
+fi
+
+# Use the created key for GitHub.com
+if [[ ! -d $SSH_CONFIG_FILE ]]; then
+    cat <<EOF >> $SSH_CONFIG_FILE
+Host github.com
+    HostName github.com
+    IdentityFile $GIT_KEY
+EOF
+else 
+    cp -a $SSH_CONFIG_FILE $SSH_CONFIG_FILE.backup.$(date +%y%m%d)
+    cat <<EOF >> $SSH_CONFIG_FILE
+Host github.com
+    HostName github.com
+    IdentityFile $GIT_KEY
+EOF
 fi
 
 git remote rm origin
@@ -43,10 +62,9 @@ git init
 git pull git@github.com:$3.git
 
 if [[ $? -eq 0 ]]; then
-	echo -e "\nRepositroy pulled succesfully, available at $USER_CUSTOM_PATH"
+	echo -e "\nRepository pulled succesfully, available at $USER_CUSTOM_PATH"
 	exit 0
 else
 	echo -e "ERROR: Respository not pulled succesfully, check if the public ssh key is correctly associated in GitHub or if the repository name is spelled correctly"
 	exit 2
 fi
-
