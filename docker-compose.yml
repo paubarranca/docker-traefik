@@ -26,12 +26,12 @@ services:
                           #- traefik.http.routers.http-catchall.entrypoints=web
                           #- traefik.http.routers.http-catchall.middlewares=redirect-to-https@docker
                           #- traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https
-        front:
-                container_name: front
+        apache:
+                container_name: apache
                 restart: always
-                image: paubarranca/debian-apache-php:latest
+                image: paubarranca/debian-apache-php:v7.3
                 volumes:
-                        - /srv/front/data:/var/www/httpdocs
+                        - /srv/apache/data:/var/www/httpdocs
                 labels:
                         - traefik.enable=true
                         - traefik.http.routers.dev.rule=Host(`dev.zobalo.com`)
