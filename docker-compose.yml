@@ -21,17 +21,13 @@ services:
                 ports:
                         - "80:80"
                         - "443:443"
-                          #labels:
-                          #- traefik.http.routers.http-catchall.rule=hostregexp(`{host:.+}`)
-                          #- traefik.http.routers.http-catchall.entrypoints=web
-                          #- traefik.http.routers.http-catchall.middlewares=redirect-to-https@docker
-                          #- traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https
-        apache:
-                container_name: apache
+
+        nginx-php:
+                container_name: nginx-php
                 restart: always
-                image: paubarranca/debian-apache-php:v7.3
+                image: paubarranca/debian-nginx-php:v7.3
                 volumes:
-                        - /srv/apache/data:/var/www/httpdocs
+                        - /srv/nginx/www:/var/www/httpdocs
                 labels:
                         - traefik.enable=true
                         - traefik.http.routers.dev.rule=Host(`dev.zobalo.com`)
@@ -41,6 +37,22 @@ services:
                         - traefik.http.routers.dev2.rule=Host(`dev.zobalo.com`)
                         - traefik.http.routers.dev2.entrypoints=https
                         - traefik.http.routers.dev2.tls.certresolver=tls
+        apache-php:
+                container_name: apache-php
+                restart: always
+                image: paubarranca/debian-apache-php:v7.3
+                volumes:
+                        - /srv/apache/www:/var/www/httpdocs
+                labels:
+                        - traefik.enable=true
+                        - traefik.http.routers.pre.rule=Host(`pre.zobalo.com`)
+                        - traefik.http.routers.pre.entrypoints=http
+                        - traefik.http.routers.pre.middlewares=redirect
+                        - traefik.http.middlewares.redirect.redirectscheme.scheme=https
+                        - traefik.http.routers.pre2.rule=Host(`pre.zobalo.com`)
+                        - traefik.http.routers.pre2.entrypoints=https
+                        - traefik.http.routers.pre2.tls.certresolver=tls
+
         mysql:
                 container_name: mysql
                 restart: always
@@ -48,10 +60,11 @@ services:
                 volumes:
                         - /srv/mysql/data:/var/lib/mysql
                 environment:
-                          MYSQL_ROOT_PASSWORD: sccG6Au8sGhHL
+                          MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
                           MYSQL_DATABASE: docker_test 
                           MYSQL_USER: docker-test
-                          MYSQL_PASSWORD: sccG6Au8sGhHL
+                          MYSQL_PASSWORD: ${MYSQL_USER_PASSWORD}
+
         wordpress:
                 container_name: wordpress
                 restart: always
@@ -72,13 +85,12 @@ services:
                 environment:
                           WORDPRESS_DB_HOST: mysql:3306
                           WORDPRESS_DB_USER: docker-test 
-                          WORDPRESS_DB_PASSWORD: sccG6Au8sGhHL 
+                          WORDPRESS_DB_PASSWORD: ${MYSQL_ROOT_PASSWORD} 
                           WORDPRESS_DB_NAME: docker_test
+
         redis:
                 container_name: redis
                 restart: always
-                depends_on:
-                        - front
                 image: paubarranca/redis:v1
                 ports:
                         - "6379:6379"
